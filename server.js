@@ -21,15 +21,26 @@ var friends =
         scores: [5, 1, 3, 4, 5, 2, 2, 5, 4, 1]
     },
     {
-        name: "Jenna",
-        photo: "http://specials-images.forbesimg.com/imageserve/5849e26b31358e698adb6d0c/416x416.jpg?background=000000&cropX1=98&cropX2=704&cropY1=56&cropY2=662",
+        name: "Julia",
+        photo: "https://a57.foxnews.com/global.fncstatic.com/static/managed/img/Entertainment/0/0/Julia%20Louis-Dreyfus%20Reuters%20660.JPG",
         scores: [1, 3, 4, 5, 2, 2, 5, 4, 1, 4]
     },
     {
-        name: "Harold",
-        photo: "http://specials-images.forbesimg.com/imageserve/5849e26b31358e698adb6d0c/416x416.jpg?background=000000&cropX1=98&cropX2=704&cropY1=56&cropY2=662",
+        name: "Robert",
+        photo: "https://pixel.nymag.com/imgs/daily/vulture/2017/03/20/20-robert-downey-jr.w330.h330.jpg",
         scores: [3, 4, 2, 1, 2, 5, 5, 3, 2, 3]
-    }]  
+    },
+    {
+        name: "Lupita",
+        photo: "http://www.jamesmurua.com/wp-content/uploads/2016/09/Lupita-Nyongo.jpg",
+        scores: [2, 1, 2, 5, 5, 3, 2, 3, 5, 4]
+    },
+    {
+        name: "Dev",
+        photo: "https://www.filmibeat.com/img/2017/01/dev-patel-overwhelmed-by-his-new-found-heartthrobe-status-31-1485864939.jpg",
+        scores: [4, 2, 1, 2, 2, 5, 3, 2, 3, 1]
+    } 
+]  
 
 // allow html images to be routed
 app.use(express.static("app/public"));
