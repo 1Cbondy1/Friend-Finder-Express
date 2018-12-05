@@ -37,7 +37,7 @@
         <hr>
 
         <h3><strong>Question 1</strong></h3>
-        <h4>Your mind is always buzzing with unexplored ideas and plans.</h4>
+        <h4>You make friends easily.</h4>
         <select class="chosen-select" id="q1">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -48,7 +48,7 @@
         </select>
 
         <h3><strong>Question 2</strong></h3>
-        <h4>Generally speaking, you rely more on your experience than your imagination.</h4>
+        <h4>You believe in the impotance of art.</h4>
         <select class="chosen-select" id="q2">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -59,7 +59,7 @@
         </select>
 
         <h3><strong>Question 3</strong></h3>
-        <h4>You find it easy to stay relaxed and focused even when there is some pressure.</h4>
+        <h4>You experience your emotions intensely.</h4>
         <select class="chosen-select" id="q3">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -81,7 +81,7 @@
         </select>
 
         <h3><strong>Question 5</strong></h3>
-        <h4>People can rarely upset you.</h4>
+        <h4>You are always busy.</h4>
         <select class="chosen-select" id="q5">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -103,7 +103,7 @@
         </select>
 
         <h3><strong>Question 7</strong></h3>
-        <h4>In a discussion, truth should be more important than people’s sensitivities.</h4>
+        <h4>You see yourself as sympathetic and warm.</h4>
         <select class="chosen-select" id="q7">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -125,7 +125,7 @@
         </select>
 
         <h3><strong>Question 9</strong></h3>
-        <h4>You think that everyone’s views should be respected regardless of whether they are supported by facts or not.</h4>
+        <h4>You see yourself as disorganized and careless.</h4>
         <select class="chosen-select" id="q9">
             <option value=""></option>
             <option value="1">1 (Strongly Disagree)</option>
@@ -150,8 +150,7 @@
         <br>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color:#FF3F57; width:150px" id="submit"><i class="fa fa-check-circle" aria-hidden="true"></i>
-            Submit</button>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" style="background-color:#FF3F57; width:150px" id="submit"><i class="fa fa-check-circle" aria-hidden="true"></i>Submit</button>
 
         <hr>
         <footer class="footer">
@@ -167,14 +166,14 @@
         <div class="modal-dialog">
 
             <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content" style="text-align:center">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h2 class="modal-title"><strong>Best Match</strong></h2>
                 </div>
                 <div class="modal-body">
                     <h2 id="match-name"></h2>
-                    <img id="match-img" src="#" alt="">
+                    <img id="match-img" style="width:400px" src="#" alt="">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -222,7 +221,7 @@
             // If all required fields are filled
             if (validateForm()) {
             // Create an object for the user data
-            var userData = {
+            var newFriend = {
                 name: $("#name").val(),
                 photo: $("#photo").val(),
                 scores: [
@@ -240,15 +239,57 @@
             };
 
             // AJAX post the data to the friends API.
-            $.post("/api/friends", userData, function(data) {
+            $.post("/api/friends", newFriend) 
+                .then(function(data) {
+                console.log("add.html", data);
+                alert("Adding friend...");
+            });
 
-                // Grab the result from the AJAX post so that the best match's name and photo are displayed.
-                $("#match-name").text(data.name);
-                $("#match-img").attr("src", data.photo);
+            // this long convoluted GET request is intended to find the closest friend match based on the sum of the differences between all survey answers. The api "friend" object with the lowest total numerical difference between its "score" and the user's input "score" is the closest match.
+            $.get("/api/friends", function(data) {
+
+                // array for holding each existing friend objects match number TM
+                var matchArr = [];
+                
+                // loops through all of the existing friend objects
+                for (var j = 0; j < data.length; j++) {
+                    var finalResult = 0;
+                    var resultArr = [];
+
+                    // calculates difference between all user "scores" and existing friend "scores", pushes each to resultArr
+                    for (var i = 0; i < 10; i++) {
+                        var newScore = newFriend.scores[i];
+                        var result = newScore - data[j].scores[i];
+                        resultArr.push(result);
+                    }
+                    console.log(resultArr);
+
+                    // calculates the sum of each question's resultsArr to generate the match number TM and pushes to matchArr array
+                    for (var i = 0; i < 10; i++) {
+                        finalResult += parseInt(resultArr[i]);
+                    }
+                    finalResAbs = (Math.abs(finalResult));
+                    matchArr.push(finalResAbs);
+                    console.log("Final Result: " + finalResAbs);
+                }
+                
+                // bug that pushes 0 at the end of matchArr, solved it by cutting off the end of the array
+                matchArr.splice(-1,1);
+                console.log(matchArr);
+
+                // fucntion for finding the smallest number in an array
+                function indexOfSmallest(a) {
+                    return a.indexOf(Math.min.apply(Math, a));
+                }
+                var min = indexOfSmallest(matchArr);
+                console.log(min);
+
+                $("#match-name").text(data[min].name);
+                $("#match-img").attr("src", data[min].photo);
 
                 // Show the modal with the best match
                 $("#results-modal").modal("toggle");
-
+            
             });
             } else {
             alert("Please fill out all fields before submitting!");
